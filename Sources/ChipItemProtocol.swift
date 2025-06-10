@@ -12,5 +12,4 @@ public protocol ChipItemProtocol: Identifiable where Self: AnyObject {
     var id: String { get set }
     var name: String { get set }
     var isSelected: Bool { get set }
-    var color: Color { get }
 }
