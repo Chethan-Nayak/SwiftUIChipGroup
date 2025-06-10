@@ -9,11 +9,14 @@ public class ChipItem: ChipItemProtocol {
     public var id: String = UUID().uuidString
     public var name: String
     public var isSelected: Bool = false
+    public var color: Color
 
     public init(
             name: String,
-            isSelected: Bool = false) {
+            isSelected: Bool = false,
+            color: Color = .gray) {
         self.name = name
         self.isSelected = isSelected
+        self.color = color
     }
 }
