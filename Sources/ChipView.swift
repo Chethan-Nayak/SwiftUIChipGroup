@@ -125,6 +125,7 @@ struct ChipItemView<T: ChipItemProtocol>: View {
     var body: some View {
         ZStack {
             isSelected ? selectedItemBackgroundColor : deselectedItemBackgroundColor
+            .background(item.backgroundColor)
             Button(action: {
                 onItemSelected(item)
             }, label: {
@@ -132,7 +133,6 @@ struct ChipItemView<T: ChipItemProtocol>: View {
                         .padding(.all, 5)
                         .foregroundColor(isSelected ? selectedTextColor : deselectedTextColor)
                         .font(customFont)
-                        .background(isSelected ? item.chipColor : Color.clear)
             })
                     .padding(.horizontal, 10)
                     .padding(.vertical, 3)
