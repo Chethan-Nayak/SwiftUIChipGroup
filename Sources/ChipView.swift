@@ -132,6 +132,7 @@ struct ChipItemView<T: ChipItemProtocol>: View {
                         .padding(.all, 5)
                         .foregroundColor(isSelected ? selectedTextColor : deselectedTextColor)
                         .font(customFont)
+                        .background(isSelected ? item.chipColor : Color.clear)
             })
                     .padding(.horizontal, 10)
                     .padding(.vertical, 3)
