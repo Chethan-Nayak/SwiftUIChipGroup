@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 public class ChipItem: ChipItemProtocol {
     public var id: String = UUID().uuidString
