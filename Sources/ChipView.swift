@@ -123,19 +123,19 @@ struct ChipItemView<T: ChipItemProtocol>: View {
     }
 
     var body: some View {
-        ZStack {
-            isSelected ? selectedItemBackgroundColor : deselectedItemBackgroundColor
-            .background(item.backgroundColor)
-            Button(action: {
-                onItemSelected(item)
-            }, label: {
-                Text(item.name)
-                        .padding(.all, 5)
-                        .foregroundColor(isSelected ? selectedTextColor : deselectedTextColor)
-                        .font(customFont)
-            })
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 3)
+        Button(action: {
+            onItemSelected(item)
+        }) {
+            Text(item.name)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .font(customFont)
+                .foregroundColor(isSelected ? selectedTextColor : deselectedTextColor)
+                .background(
+                    (isSelected ? selectedItemBackgroundColor : deselectedItemBackgroundColor)
+                        .overlay(item.backgroundColor.opacity(0.3))
+                        .clipShape(Capsule())
+                )
         }
     }
 
