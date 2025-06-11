@@ -25,63 +25,75 @@ public struct FlexibleView<Data: Collection, Content: View>: View where Data.Ele
     let data: Data
     let spacing: CGFloat
     let alignment: HorizontalAlignment
-    let content: (Data.Element) -> Content
+    let content: (Data.Element, CGFloat) -> Content  // Add width param here
+    
     @State var elementsSize: [Data.Element: CGSize] = [:]
-
+    
     public init(
-            availableWidth: CGFloat,
-            data: Data,
-            spacing: CGFloat,
-            alignment: HorizontalAlignment,
-            content: @escaping (Data.Element) -> Content) {
+        availableWidth: CGFloat,
+        data: Data,
+        spacing: CGFloat,
+        alignment: HorizontalAlignment,
+        content: @escaping (Data.Element, CGFloat) -> Content  // Update init
+    ) {
         self.availableWidth = availableWidth
         self.data = data
         self.spacing = spacing
         self.alignment = alignment
         self.content = content
     }
-
+    
     public var body: some View {
         ZStack {
             VStack(alignment: alignment, spacing: spacing) {
                 ForEach(computeRows(), id: \.self) { rowElements in
+                    let totalSpacing = spacing * CGFloat(max(rowElements.count - 1, 0))
+                    let totalWidthUsed = rowElements.reduce(0) { partialResult, element in
+                        partialResult + (elementsSize[element]?.width ?? 0)
+                    }
+                    // Calculate extra width per chip to fill availableWidth
+                    let leftoverWidth = max(availableWidth - totalWidthUsed - totalSpacing, 0)
+                    let extraWidthPerChip = leftoverWidth / CGFloat(rowElements.count)
+                    
                     HStack(spacing: spacing) {
                         ForEach(rowElements, id: \.self) { element in
-                            content(element)
-                                    .fixedSize()
-                                    .readSize { size in
-                                        elementsSize[element] = size
-                                    }
+                            // Pass width as intrinsic width + extraWidthPerChip
+                            let intrinsicWidth = elementsSize[element]?.width ?? 0
+                            content(element, intrinsicWidth + extraWidthPerChip)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .readSize { size in
+                                    elementsSize[element] = size
+                                }
                         }
                     }
                 }
             }
         }
     }
-
+    
     private func computeRows() -> [[Data.Element]] {
         var rows: [[Data.Element]] = [[]]
         var currentRow = 0
         var remainingWidth = availableWidth
-
+        
         for element in data {
             let elementSize = elementsSize[element, default: CGSize(width: availableWidth, height: 1)]
-
+            
             if remainingWidth - elementSize.width >= 0 {
                 rows[currentRow].append(element)
+                remainingWidth -= (elementSize.width + spacing)
             } else {
                 // start a new row
-                currentRow = currentRow + 1
+                currentRow += 1
                 rows.append([element])
-                remainingWidth = availableWidth
+                remainingWidth = availableWidth - elementSize.width - spacing
             }
-
-            remainingWidth = remainingWidth - elementSize.width
         }
-
+        
         return rows
     }
 }
+
 
 extension View {
     func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
