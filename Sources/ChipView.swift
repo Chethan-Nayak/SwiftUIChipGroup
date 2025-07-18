@@ -50,7 +50,7 @@ public struct ChipView<T: ChipItemProtocol>: View {
                 },
                 spacing: 15,
                 alignment: .leading
-        ) { item in
+        ) { item, _ in
             ItemView(item: item.item)
         }
                 .padding(.horizontal, 30)
