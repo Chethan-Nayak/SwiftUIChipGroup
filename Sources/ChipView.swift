@@ -53,9 +53,6 @@ public struct ChipView<T: ChipItemProtocol>: View {
         ) { item, _ in
             ItemView(item: item.item)
         }
-                .padding(.horizontal, 30)
-                .padding(.leading, 5)
-                .padding(.trailing, 10)
     }
 
     private func ItemView(item: T) -> some View {
